@@ -50,13 +50,26 @@ section{position:relative; padding:96px 0}
 @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(6vw,4vh) scale(1.12)}66%{transform:translate(-5vw,-3vh) scale(.95)}}
 .fx{position:absolute;pointer-events:none;will-change:transform}
 .fx.ring{border-radius:50%;background:transparent}
-.fx.r1{width:min(460px,70vw);height:min(460px,70vw);top:5%;right:-8vw;border:1.5px solid rgba(139,92,255,.22)}
-.fx.r2{width:min(300px,54vw);height:min(300px,54vw);bottom:8%;left:-6vw;border:1.5px solid rgba(83,240,168,.18)}
+.fx.r1{width:min(460px,70vw);height:min(460px,70vw);top:5%;right:-8vw;border:1px solid rgba(139,92,255,.1)}
+.fx.r2{width:min(300px,54vw);height:min(300px,54vw);bottom:8%;left:-6vw;border:1px solid rgba(83,240,168,.08)}
 .fx.dot{border-radius:50%}
-.fx.d1{width:14px;height:14px;top:26%;left:13%;background:var(--magenta);box-shadow:0 0 22px 2px var(--magenta);opacity:.55}
-.fx.d2{width:10px;height:10px;top:66%;right:19%;background:var(--emerald);box-shadow:0 0 18px 2px var(--emerald);opacity:.55}
-.fx.sq{width:120px;height:120px;top:40%;right:9%;border:1.5px solid rgba(255,178,77,.2);border-radius:14px;transform:rotate(18deg)}
-.fx.pl{width:32px;height:32px;top:16%;left:40%;opacity:.5;background:linear-gradient(var(--violet-2),var(--violet-2)) center/100% 2px no-repeat,linear-gradient(var(--violet-2),var(--violet-2)) center/2px 100% no-repeat}
+.fx.d1{width:9px;height:9px;top:24%;left:11%;background:rgba(255,77,141,.55);box-shadow:0 0 10px 1px rgba(255,77,141,.3);opacity:.5}
+.fx.d2{width:7px;height:7px;top:68%;right:16%;background:rgba(83,240,168,.55);box-shadow:0 0 9px 1px rgba(83,240,168,.28);opacity:.5}
+.fx.sq{width:108px;height:108px;top:42%;right:8%;border:1px solid rgba(255,178,77,.1);border-radius:14px;transform:rotate(18deg)}
+.fx.pl{width:26px;height:26px;top:14%;left:38%;opacity:.22;background:linear-gradient(var(--violet-2),var(--violet-2)) center/100% 1.5px no-repeat,linear-gradient(var(--violet-2),var(--violet-2)) center/1.5px 100% no-repeat}
+.fx.mo{opacity:.1}
+.fx.mo.fp{width:82px;height:82px;top:57%;left:5%;color:var(--magenta)}
+.fx.mo.scope{width:52px;height:52px;top:13%;right:13%;color:var(--emerald);opacity:.12}
+.fx.mo.node{width:92px;height:70px;bottom:15%;right:13%;color:var(--violet-2)}
+.fx.hex{font-family:var(--font-m);font-size:10px;letter-spacing:.14em;color:var(--faint);opacity:.28;top:33%;right:5%;white-space:nowrap}
+@keyframes nmfloat{0%,100%{transform:translate(0,0)}33%{transform:translate(6px,-8px)}66%{transform:translate(-5px,5px)}}
+.fx.nm{font-family:var(--font-m);font-size:10px;letter-spacing:.1em;color:var(--violet-2);opacity:.08;white-space:nowrap;text-transform:lowercase;animation:nmfloat 16s ease-in-out infinite}
+.fx.n1{top:21%;left:7%;animation-duration:15s}
+.fx.n2{top:46%;right:8%;opacity:.06;animation-duration:19s;animation-delay:-5s}
+.fx.n3{top:73%;left:14%;animation-duration:17s;animation-delay:-8s}
+.fx.n4{top:32%;left:47%;opacity:.05;font-size:9px;animation-duration:21s;animation-delay:-3s}
+.fx.n5{bottom:17%;right:25%;animation-duration:14s;animation-delay:-10s}
+.fx.n6{top:11%;left:72%;opacity:.07;animation-duration:20s;animation-delay:-6s}
 .grid-bg{position:fixed; inset:0; z-index:-2; pointer-events:none;
   background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
   background-size:64px 64px; mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 30%,transparent 78%); opacity:.5}
@@ -275,7 +288,22 @@ footer .socials svg{width:19px;height:19px}
 <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
-<div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="fx ring r1"></div><div class="fx ring r2"></div><div class="fx dot d1"></div><div class="fx dot d2"></div><div class="fx sq"></div><div class="fx pl"></div></div>
+<div class="aurora">
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div class="fx ring r1"></div><div class="fx ring r2"></div>
+<div class="fx dot d1"></div><div class="fx dot d2"></div>
+<div class="fx sq"></div><div class="fx pl"></div>
+<svg class="fx mo fp" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M32 8C19 8 8 18 8 32c0 6 2 11 5 15"/><path d="M32 16c-9 0-16 7-16 16 0 5 1 9 4 12"/><path d="M32 24c-4 0-8 4-8 8 0 4 1 7 3 10"/><path d="M32 32v12"/><path d="M40 20c3 3 5 7 5 12 0 7-2 13-5 18"/><path d="M48 15c4 4 7 10 7 17 0 9-3 17-7 23"/></svg>
+<svg class="fx mo scope" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="19" cy="19" r="13"/><path d="M29 29l13 13"/><path d="M19 12v14M12 19h14"/></svg>
+<svg class="fx mo node" viewBox="0 0 92 70" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 46 44 14 76 50 48 58Z"/><circle cx="12" cy="46" r="3" fill="currentColor"/><circle cx="44" cy="14" r="3" fill="currentColor"/><circle cx="76" cy="50" r="3" fill="currentColor"/><circle cx="48" cy="58" r="2.5" fill="currentColor"/></svg>
+<span class="fx hex mono">4F 2A E1 9C · 0x1D7</span>
+<span class="fx nm n1 mono">natali soukh</span>
+<span class="fx nm n2 mono">natali soukh</span>
+<span class="fx nm n3 mono">natali soukh</span>
+<span class="fx nm n4 mono">natali soukh</span>
+<span class="fx nm n5 mono">natali soukh</span>
+<span class="fx nm n6 mono">natali soukh</span>
+</div>
 <div class="grid-bg"></div>
 <div class="noise"></div>
 <div class="progress" id="progress"></div>
@@ -732,6 +760,10 @@ if(window.gsap && !reduce){
     gsap.to('.fx.d2',{y:-340,x:-80,ease:'none',scrollTrigger:st});
     gsap.to('.fx.sq',{yPercent:-140,rotation:170,ease:'none',scrollTrigger:st});
     gsap.to('.fx.pl',{y:460,rotation:210,ease:'none',scrollTrigger:st});
+    gsap.to('.fx.mo.fp',{yPercent:-55,rotation:35,ease:'none',scrollTrigger:st});
+    gsap.to('.fx.mo.scope',{yPercent:75,rotation:-28,ease:'none',scrollTrigger:st});
+    gsap.to('.fx.mo.node',{yPercent:-90,ease:'none',scrollTrigger:st});
+    gsap.to('.fx.hex',{yPercent:130,ease:'none',scrollTrigger:st});
     addEventListener('load',()=>ScrollTrigger.refresh());
   }
 }
