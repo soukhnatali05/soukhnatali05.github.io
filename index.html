@@ -230,6 +230,16 @@ header.nav.scrolled{backdrop-filter:blur(14px);background:rgba(10,8,18,.72);bord
 .side-list li{font-size:14px;color:var(--muted);display:flex;gap:10px}
 .side-list li::before{content:"▹";color:var(--magenta)}
 .side-list li b{color:var(--text);font-weight:600}
+.honors-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.honor{padding:34px 28px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);position:relative;overflow:hidden;transition:.3s}
+.honor::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+.honor:hover{transform:translateY(-6px);border-color:var(--line-strong);box-shadow:0 22px 44px -26px var(--violet)}
+.honor .hico{width:50px;height:50px;border-radius:13px;display:grid;place-items:center;margin-bottom:22px;border:1px solid var(--line);color:var(--amber);background:rgba(255,178,77,.08)}
+.honor .hico svg{width:26px;height:26px}
+.honor .hbig{font-family:var(--font-h);font-weight:700;font-size:clamp(34px,5vw,46px);line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px}
+.honor h3{font-size:19px;margin-bottom:10px}
+.honor p{color:var(--muted);font-size:14.5px;margin:0}
+.honor em{color:var(--violet-2);font-style:italic}
 
 /* ---------- Certifications ---------- */
 .cert-group{margin-bottom:26px}
@@ -275,7 +285,7 @@ footer .socials svg{width:19px;height:19px}
   .navlinks{display:none}.menu-toggle{display:flex}
   .navlinks.open{display:flex;position:fixed;inset:68px 0 auto;flex-direction:column;background:rgba(10,8,18,.96);backdrop-filter:blur(16px);padding:24px;gap:20px;border-bottom:1px solid var(--line)}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .about-grid,.focus-grid,.proj-grid,.cert-row,.edu-grid,.flagship{grid-template-columns:1fr}
+  .about-grid,.focus-grid,.proj-grid,.cert-row,.edu-grid,.honors-grid,.flagship{grid-template-columns:1fr}
   .skills-grid{grid-template-columns:1fr}.skill.big,.skill.med,.skill.sm{grid-column:span 1}
   .flagship .side{border-left:none;border-top:1px solid var(--line)}
 }
@@ -622,6 +632,33 @@ footer .socials svg{width:19px;height:19px}
   </div>
 </section>
 
+<!-- HONORS -->
+<section id="honors">
+  <div class="wrap">
+    <div class="sec-head" data-reveal><span class="eyebrow">Recognition</span><h2>Honors &amp; awards.</h2></div>
+    <div class="honors-grid">
+      <div class="honor" data-reveal>
+        <div class="hico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4h8v5a4 4 0 01-8 0z"/><path d="M8 6H5c0 2.2 1.3 3.7 3 4M16 6h3c0 2.2-1.3 3.7-3 4"/><path d="M12 13v3M9 20h6M10 16.5h4V20h-4z"/></svg></div>
+        <div class="hbig">3×</div>
+        <h3>Dean's List</h3>
+        <p>Named every academic year since enrollment — 2023–24, 2024–25 and 2025–26.</p>
+      </div>
+      <div class="honor" data-reveal>
+        <div class="hico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="9" r="6"/><path d="M8.5 13.5L6 21l6-3 6 3-2.5-7.5"/><path d="M12 6.2l.9 1.9 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2L9.1 8.4l2-.3z"/></svg></div>
+        <div class="hbig">2×</div>
+        <h3>Queen Effat Citizenship Award</h3>
+        <p>Nominated for contribution to the university community (2024 &amp; 2025).</p>
+      </div>
+      <div class="honor" data-reveal>
+        <div class="hico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4a1 1 0 011-1h12a1 1 0 011 1v17l-7-3.5L5 21z"/><path d="M12 6.5l1.1 2.2 2.4.3-1.7 1.7.4 2.4-2.2-1.2-2.2 1.2.4-2.4L8.5 10.7l2.4-.3z"/></svg></div>
+        <div class="hbig">ICEE '26</div>
+        <h3>Published Researcher</h3>
+        <p>First-author publication in <em>Intelligent Computing for Energy &amp; Environment</em>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- EDUCATION -->
 <section id="education" style="padding-top:40px">
   <div class="wrap">
@@ -633,11 +670,11 @@ footer .socials svg{width:19px;height:19px}
         <div class="gpa">3.86 <span style="font-size:18px;color:var(--muted);-webkit-text-fill-color:var(--muted)"> / 4.0 GPA</span></div>
       </div>
       <div class="side-list hud" data-reveal>
-        <h4>Honors & awards</h4>
+        <h4>Languages</h4>
         <ul>
-          <li><b>Dean's List</b> — 2023–24, 2024–25, 2025–26</li>
-          <li><b>Nominee</b>, Queen Effat Citizenship Award (2024 & 2025)</li>
-          <li><b>Published</b> security researcher (ICEE 2026)</li>
+          <li><b>Arabic</b> — Native</li>
+          <li><b>English</b> — Full professional</li>
+          <li><b>French</b> — Elementary</li>
         </ul>
       </div>
     </div>
@@ -729,7 +766,7 @@ else{
 }
 
 /* staggered reveal — robust IntersectionObserver (never leaves content hidden) */
-document.querySelectorAll('.stats,.focus-grid,.skills-grid,.proj-grid').forEach(p=>{
+document.querySelectorAll('.stats,.focus-grid,.skills-grid,.proj-grid,.honors-grid').forEach(p=>{
   let i=0;[...p.children].forEach(el=>{ if(el.hasAttribute('data-reveal')) el.style.transitionDelay=((i++)*0.07)+'s'; });
 });
 if('IntersectionObserver' in window){
