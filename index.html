@@ -97,7 +97,7 @@ header.nav.scrolled{backdrop-filter:blur(14px);background:rgba(10,8,18,.72);bord
 
 /* ---------- Hero ---------- */
 .hero{min-height:100vh;display:flex;align-items:center;padding-top:90px;padding-bottom:40px}
-#net{position:absolute;inset:0;z-index:-1;width:100%;height:100%;opacity:.55}
+#net{position:absolute;inset:0;z-index:-1;width:100%;height:100%;opacity:.42}
 .hero .wrap{position:relative}
 .hero .status{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-m);font-size:12.5px;color:var(--emerald);border:1px solid rgba(83,240,168,.3);background:rgba(83,240,168,.06);padding:7px 14px;border-radius:999px;margin-bottom:26px}
 .hero .status .pulse{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 0 0 rgba(83,240,168,.6);animation:pulse 2s infinite}
@@ -719,6 +719,7 @@ footer .socials svg{width:19px;height:19px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -840,29 +841,74 @@ if(mag && !reduce && window.gsap){
   mag.addEventListener('pointerleave',()=>{xTo(0);yTo(0);});
 }
 
-/* hero network canvas */
+/* hero 3D network sphere (Three.js) — upgrades the old 2D particle canvas */
 (function(){
-  const c=document.getElementById('net'); if(!c) return;
-  const ctx=c.getContext('2d'); let w,h,dpr,nodes=[],raf;
-  const COLORS=['139,92,255','255,77,141','83,240,168'];
-  function size(){ dpr=Math.min(devicePixelRatio||1,2); w=c.clientWidth; h=c.clientHeight; c.width=w*dpr; c.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
-  function init(){ size(); const n=Math.min(70,Math.floor(w*h/16000)); nodes=[]; for(let i=0;i<n;i++){ nodes.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,col:COLORS[i%3]}); } }
-  function draw(){
-    ctx.clearRect(0,0,w,h);
-    for(let i=0;i<nodes.length;i++){
-      const a=nodes[i]; a.x+=a.vx; a.y+=a.vy;
-      if(a.x<0||a.x>w)a.vx*=-1; if(a.y<0||a.y>h)a.vy*=-1;
-      for(let j=i+1;j<nodes.length;j++){
-        const b=nodes[j], dx=a.x-b.x, dy=a.y-b.y, d=Math.hypot(dx,dy);
-        if(d<128){ ctx.strokeStyle='rgba('+a.col+','+(.13*(1-d/128))+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
-      }
-      ctx.fillStyle='rgba('+a.col+',.75)'; ctx.beginPath(); ctx.arc(a.x,a.y,1.6,0,6.283); ctx.fill();
-    }
-    raf=requestAnimationFrame(draw);
+  const canvas=document.getElementById('net'); if(!canvas||!window.THREE) return;
+  const hero=document.getElementById('top');
+  const PAL=[[0.545,0.361,1.0],[1.0,0.302,0.553],[0.325,0.941,0.659]]; // violet · magenta · emerald
+
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(55,1,0.1,100);
+  camera.position.set(0,0,3.6);
+  const group=new THREE.Group(); scene.add(group);
+
+  // nodes distributed on a sphere (fibonacci lattice)
+  const N=window.innerWidth<720?150:260, R=1.4, GA=Math.PI*(3-Math.sqrt(5));
+  const pos=[], col=[];
+  for(let i=0;i<N;i++){
+    const y=1-(i/(N-1))*2, r=Math.sqrt(Math.max(0,1-y*y)), t=GA*i;
+    pos.push(Math.cos(t)*r*R, y*R, Math.sin(t)*r*R);
+    const c=PAL[i%3]; col.push(c[0],c[1],c[2]);
   }
-  init(); if(!reduce) draw(); else { // static frame
-    for(const a of nodes){ ctx.fillStyle='rgba('+a.col+',.6)'; ctx.beginPath(); ctx.arc(a.x,a.y,1.6,0,6.283); ctx.fill(); } }
-  let rt; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ cancelAnimationFrame(raf); init(); if(!reduce) draw(); },200); });
+  // soft round sprite for each node
+  const tex=(function(){ const s=64,cv=document.createElement('canvas'); cv.width=cv.height=s; const g=cv.getContext('2d');
+    const gr=g.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2); gr.addColorStop(0,'rgba(255,255,255,1)'); gr.addColorStop(.45,'rgba(255,255,255,.85)'); gr.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle=gr; g.fillRect(0,0,s,s); return new THREE.CanvasTexture(cv); })();
+  const pg=new THREE.BufferGeometry();
+  pg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  pg.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+  const pm=new THREE.PointsMaterial({size:0.062,map:tex,vertexColors:true,transparent:true,opacity:.82,depthWrite:false,blending:THREE.AdditiveBlending});
+  group.add(new THREE.Points(pg,pm));
+
+  // links between nearby nodes
+  const epos=[], ecol=[], THR=0.5*R;
+  for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){
+    const dx=pos[i*3]-pos[j*3], dy=pos[i*3+1]-pos[j*3+1], dz=pos[i*3+2]-pos[j*3+2];
+    if(dx*dx+dy*dy+dz*dz < THR*THR){
+      epos.push(pos[i*3],pos[i*3+1],pos[i*3+2], pos[j*3],pos[j*3+1],pos[j*3+2]);
+      const a=PAL[i%3],b=PAL[j%3]; ecol.push(a[0],a[1],a[2], b[0],b[1],b[2]);
+    }
+  }
+  const lg=new THREE.BufferGeometry();
+  lg.setAttribute('position',new THREE.Float32BufferAttribute(epos,3));
+  lg.setAttribute('color',new THREE.Float32BufferAttribute(ecol,3));
+  const lm=new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.1,depthWrite:false,blending:THREE.AdditiveBlending});
+  group.add(new THREE.LineSegments(lg,lm));
+  group.rotation.x=0.35;
+
+  function resize(){ const w=canvas.clientWidth,h=canvas.clientHeight; if(!w||!h) return; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+  resize();
+
+  let px=0,py=0; // pointer parallax target
+  window.addEventListener('pointermove',e=>{ px=e.clientX/window.innerWidth-.5; py=e.clientY/window.innerHeight-.5; },{passive:true});
+  function render(){ group.rotation.y+=0.0016; group.rotation.x+=((0.35-py*0.5)-group.rotation.x)*0.04; group.position.x+=((px*0.5)-group.position.x)*0.04; renderer.render(scene,camera); }
+
+  // only animate while the hero is on-screen and the tab is active
+  let raf=null,inView=true;
+  function loop(){ render(); raf=requestAnimationFrame(loop); }
+  function start(){ if(raf==null&&inView&&!document.hidden&&!reduce) loop(); }
+  function stop(){ if(raf!=null){ cancelAnimationFrame(raf); raf=null; } }
+
+  if(reduce){ render(); }
+  else{
+    if('IntersectionObserver' in window) new IntersectionObserver(es=>{ inView=es[0].isIntersecting; inView?start():stop(); },{threshold:0}).observe(hero);
+    document.addEventListener('visibilitychange',()=>{ document.hidden?stop():start(); });
+    start();
+  }
+  let rt; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2)); resize(); if(reduce) render(); },200); });
+  window.addEventListener('pagehide',()=>{ stop(); pg.dispose();pm.dispose();lg.dispose();lm.dispose();tex.dispose();renderer.dispose(); },{once:true});
 })();
 </script>
 </body>
